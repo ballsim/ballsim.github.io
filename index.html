@@ -67,9 +67,9 @@
                 <label class="inputNoLabel">Green: <div class="inputMin"><input type="number" id="greenMin" value="0" onblur="change('greenMin', '#')"><div class="inputTxt">-</div></div><div class="inputMax"><input type="number" id="greenMax" value="250" onblur="change('greenMax', '#')"><div class="inputTxt"></div></div></label><br>
                 <label class="inputNoLabel">Blue: <div class="inputMin"><input type="number" id="blueMin" value="0" onblur="change('blueMin', '#')"><div class="inputTxt">-</div></div><div class="inputMax"><input type="number" id="blueMax" value="250" onblur="change('blueMax', '#')"><div class="inputTxt"></div></div></label><br>
 
-                <label class="container">Image: <a onclick="document.getElementById('upload').click();" id="uploadTxt">Upload image</a>
+                <label class="container" for=""><label for="imageCB">Image:</label> <a onclick="document.getElementById('upload').click();" id="uploadTxt">Upload image</a><label for="imageCB">
                     <input type="checkbox" id="imageCB" onchange="toggle('color')"/>
-                    <span class="checkmark"></span>
+                    <span class="checkmark"></span></label>
                 </label>
                 <input type="file" accept="image/*" onchange="previewFile()" id="upload">
             </div>
@@ -93,7 +93,7 @@
             <img src="icons/Ball.png" id="ballIcon" class="icon" onclick="mode('wall')"/>
             <img src="icons/Wall.png" id="wallIcon" class="icon" onclick="mode('ball')"/>
 
-            <input type="range" min="10" max="100" value="30" class="slider" id="slider">
+            <input type="range" min="7" max="70" value="20" class="slider" id="slider">
 
             <img src="icons/Reset.png" id="resetIcon" class="icon" onclick="reset()"/>
         </div>

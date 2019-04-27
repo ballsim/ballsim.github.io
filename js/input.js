@@ -43,7 +43,7 @@ else{
     };
 
     document.getElementById("slider").oninput = function() {
-        clicks["scroll"] = {x:canvas.width/2, y:canvas.height/2};
+        clicks["scroll"] = {x:canvas.width/2, y:canvas.height/1.3};
         if(scrollTimer != 0){clearTimeout(scrollTimer);}
         scrollTimer = window.setTimeout("scrollStop()", 250);
 
@@ -85,6 +85,8 @@ function clickDown(x,y,mode){
         if(scrollTimer != 0){clearTimeout(scrollTimer);}
         scrollTimer = window.setTimeout("scrollStop()", 500);
     }
+
+    drawobjects();
 }
 
 function clickUp(x,y,mode){
@@ -125,6 +127,8 @@ function clickUp(x,y,mode){
         clicks["rightdown"] = {x:".", y:"."};
         clicks["rightmove"] = {x:".", y:"."};
     }
+
+    drawobjects();
 }
 
 function clickMove(x,y){
@@ -146,6 +150,8 @@ function clickMove(x,y){
 
         clicks["moved"] = {x:x, y:y};
     }
+
+    drawobjects();
 }
 
 document.onkeydown = checkKeyDown;

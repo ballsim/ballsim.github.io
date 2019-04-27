@@ -18,14 +18,13 @@ function previewFile(){
 
 function toggle(variable){
     if(variable == "color"){
-        document.getElementById("colorCB").checked = !document.getElementById("colorCB").checked;
-        if(standardColorBalls == "image()"){
-            standardColorBalls = "randomColor()";
-            document.getElementById("colorCB").checked = true;
-            document.getElementById("imageCB").checked = false;
+        document.getElementById("colorCB").checked = true;
+        document.getElementById("imageCB").checked = false;
+        if(standardColorBalls == "randomColor()"){
+            document.getElementById("upload").click();
         }
         else{
-            document.getElementById("upload").click();
+            standardColorBalls = "randomColor()";
         }
     }
     else{

@@ -16,7 +16,7 @@ var collisionEdges = true;
 var wrapEdges = false;
 var paused = false;
 var trail = false;
-var standardRadiusBalls = 30;
+var standardRadiusBalls = 30; if(mobile()){standardRadiusBalls = 20;}
 var standardColorBalls = "randomColor()";
 
 var gravityScale = 0.5;
@@ -237,6 +237,7 @@ function drawobjects() {
                     ctx.stroke();
                 }
                 else{
+                    ctx.globalAlpha = (frame-currentFrame+trailLength)/(trailLength*2);
                     ctx.beginPath();
                     ctx.arc(frameHistory[frame].balls[ball].x, frameHistory[frame].balls[ball].y, frameHistory[frame].balls[ball].radius, 0, 2*Math.PI);
                     ctx.closePath();
@@ -244,6 +245,7 @@ function drawobjects() {
                     ctx.clip();
                     ctx.drawImage(document.getElementById(frameHistory[frame].balls[ball].color), frameHistory[frame].balls[ball].x - frameHistory[frame].balls[ball].radius, frameHistory[frame].balls[ball].y - frameHistory[frame].balls[ball].radius,frameHistory[frame].balls[ball].radius*2,frameHistory[frame].balls[ball].radius*2);
                     ctx.restore();
+                    ctx.globalAlpha = 1;
                 }
             }
         }

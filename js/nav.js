@@ -69,12 +69,16 @@ function reset(){
 	document.getElementById("blueMax").value = 250; change("blueMax", "#");
 
 	if(mobile()){
-		document.getElementById("slider").value = 30;
+		document.getElementById("slider").value = 20;
 		
 		clicks["scroll"] = {x:canvas.width/2, y:canvas.height/2};
         if(scrollTimer != 0){clearTimeout(scrollTimer);}
         scrollTimer = window.setTimeout("scrollStop()", 250);
 
         standardRadiusBalls = Number(document.getElementById("slider").value);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        balls = [];
+        walls = [];
 	}
 }
