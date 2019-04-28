@@ -203,11 +203,13 @@ function drawobjects() {
     if(trail == false || trailLength){ctx.clearRect(0, 0, canvas.width, canvas.height);}
     for(var ball in balls){
         if(balls[ball].color.indexOf("rgb") == 0){
+            ctx.globalAlpha = 0.5;
             ctx.beginPath();
             ctx.arc(balls[ball].x, balls[ball].y, balls[ball].radius, 0, 2*Math.PI);
             ctx.closePath();
-            ctx.fillStyle = balls[ball].color.slice(0, -1) + ", 0.5)";
+            ctx.fillStyle = balls[ball].color.slice(0, -1)+")";
             ctx.fill();
+            ctx.globalAlpha = 1;
             ctx.lineWidth = 1;
             ctx.strokeStyle = balls[ball].color;
             ctx.stroke();
@@ -227,14 +229,17 @@ function drawobjects() {
         for(var frame = currentFrame-trailLength; frame<currentFrame; frame++){
             for(var ball in frameHistory[frame].balls){
                 if(frameHistory[frame].balls[ball].color.indexOf("rgb") == 0){
+                    ctx.globalAlpha = (frame-currentFrame+trailLength)/(trailLength*2);
                     ctx.beginPath();
                     ctx.arc(frameHistory[frame].balls[ball].x, frameHistory[frame].balls[ball].y, frameHistory[frame].balls[ball].radius, 0, 2*Math.PI);
                     ctx.closePath();
-                    ctx.fillStyle = frameHistory[frame].balls[ball].color.slice(0, -1) + ", " + (frame-currentFrame+trailLength)/(trailLength*2) + ")";
+                    ctx.fillStyle = frameHistory[frame].balls[ball].color.slice(0, -1)+")";
                     ctx.fill();
+                    ctx.globalAlpha = (frame-currentFrame+trailLength)/(trailLength);
                     ctx.lineWidth = 1;
-                    ctx.strokeStyle = frameHistory[frame].balls[ball].color.slice(0, -1) + ", " + (frame-currentFrame+trailLength)/(trailLength) + ")";
+                    ctx.strokeStyle = frameHistory[frame].balls[ball].color.slice(0, -1)+")";
                     ctx.stroke();
+                    ctx.globalAlpha = 1;
                 }
                 else{
                     ctx.globalAlpha = (frame-currentFrame+trailLength)/(trailLength*2);
