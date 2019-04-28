@@ -1,9 +1,9 @@
 var clicks = {leftdown:".",leftup:".",rightdown:".",rightup:".",leftmove:".",rightmove:".",scroll:".", move:false};
 var scrollTimer = 0;
 var moveTimer = 0;
-var mobileClickMode = 0;
+var mobile = {clickMode: 0, leftHeld: false, rightHeld: false, heldTimer: 0, fpsCheck: 0};
 
-if(mobile() == false){
+if(isMobile() == false){
     canvas.onmousedown = function(e){
         clickDown(e.clientX, e.clientY, e.button);
     };
@@ -31,11 +31,11 @@ if(mobile() == false){
 }
 else{
     canvas.ontouchstart = function(e){
-        clickDown(e.touches[0].clientX, e.touches[0].clientY, mobileClickMode);
+        clickDown(e.touches[0].clientX, e.touches[0].clientY, mobile.clickMode);
     };
 
     canvas.ontouchend = function(e){
-        clickUp(event.changedTouches[event.changedTouches.length-1].pageX, event.changedTouches[event.changedTouches.length-1].pageY, mobileClickMode);
+        clickUp(event.changedTouches[event.changedTouches.length-1].pageX, event.changedTouches[event.changedTouches.length-1].pageY, mobile.clickMode);
     };
 
     canvas.ontouchmove = function(e){
@@ -48,7 +48,29 @@ else{
         scrollTimer = window.setTimeout("scrollStop()", 250);
 
         standardRadiusBalls = Number(document.getElementById("slider").value);
-    }
+    };
+
+    document.getElementById("left").ontouchstart = function(e){
+        previousFrame();
+        mobile.leftHeld = true;
+        mobile.heldTimer = window.setTimeout("mobileHeld()", 500);
+    };
+
+    document.getElementById("left").ontouchend = function(e){
+        mobile.leftHeld = false;
+        clearTimeout(mobile.heldTimer);
+    };
+
+    document.getElementById("right").ontouchstart = function(e){
+        nextFrame();
+        mobile.rightHeld = true;
+        mobile.heldTimer = window.setTimeout("mobileHeld()", 500);
+    };
+
+    document.getElementById("right").ontouchend = function(e){
+        mobile.rightHeld = false;
+        clearTimeout(mobile.heldTimer);
+    };
 }
 
 

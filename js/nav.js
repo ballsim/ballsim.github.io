@@ -8,14 +8,14 @@ function nav(content){
 }
 function openNav(content){
 	document.getElementById("nav").style.height = "300px";
-	if(mobile()){document.getElementById("nav").style.height = "320px";}
+	if(isMobile()){document.getElementById("nav").style.height = "320px";}
 	document.getElementById("nav").style.width = "200px";
 
-	if(mobile() == false){
+	if(isMobile() == false){
 		document.getElementById("infoIcon").style.display = "block";
 	}
 	else{
-		if(mobileClickMode == 0){document.getElementById("ballIcon").style.display = "block";}
+		if(mobile.clickMode == 0){document.getElementById("ballIcon").style.display = "block";}
 		else{document.getElementById("wallIcon").style.display = "block";}
 		document.getElementById("undoIcon").style.display = "block";
 		document.getElementById("slider").style.display = "block";
@@ -68,7 +68,7 @@ function reset(){
 	document.getElementById("greenMax").value = 250; change("greenMax", "#");
 	document.getElementById("blueMax").value = 250; change("blueMax", "#");
 
-	if(mobile()){
+	if(isMobile()){
 		document.getElementById("slider").value = 20;
 		
 		clicks["scroll"] = {x:canvas.width/2, y:canvas.height/2};
@@ -76,6 +76,10 @@ function reset(){
         scrollTimer = window.setTimeout("scrollStop()", 250);
 
         standardRadiusBalls = Number(document.getElementById("slider").value);
+
+        mobile.clickMode = 0;
+        document.getElementById("ballIcon").style.display = "block";
+		document.getElementById("wallIcon").style.display = "none";
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         balls = [];
