@@ -16,7 +16,7 @@ var collisionEdges = true;
 var wrapEdges = false;
 var paused = false;
 var trail = false;
-var freeFromWalls = false;
+var freeFormWalls = false;
 var standardRadiusBalls = 30; if(isMobile()){standardRadiusBalls = 20;}
 var standardColorBalls = "randomColor()";
 
