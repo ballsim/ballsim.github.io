@@ -93,6 +93,8 @@ function clickDown(x,y,mode){
                 balls[ball].dx = 0;
                 balls[ball].dy = 0;
                 clicks["leftdown"] = {x:".", y:"."};
+                if(moveTimer != 0){clearTimeout(moveTimer);}
+                moveTimer = window.setTimeout("moveStop()", 10);
             }
         }
     }
@@ -124,8 +126,13 @@ function clickUp(x,y,mode){
                 dy:-(clicks["leftdown"].y-clicks["leftup"].y)/30,
                 x:clicks["leftdown"].x,
                 y:clicks["leftdown"].y,
+                angularVelocity:0,
+                angularAngle:0,
                 color:eval(standardColorBalls),
             };
+            if(balls.length == 1){
+                balls[0].angularVelocity = 10;
+            }
         }
         else{
             clicks["move"] = false;
@@ -160,11 +167,27 @@ function clickMove(x,y){
 
     if(clicks["rightheld"]){
         clicks["rightmove"] = {x:x, y:y};
+
+        if(freeFormWalls){
+            clicks["rightup"] = {x:x, y:y};
+            
+            if(Math.hypot(clicks["rightup"].x-clicks["rightdown"].x, clicks["rightup"].y-clicks["rightdown"].y)>50){
+
+                walls[walls.length] = {
+                    x1:clicks["rightdown"].x, 
+                    y1:clicks["rightdown"].y,
+                    x2:clicks["rightup"].x,
+                    y2:clicks["rightup"].y
+                };
+
+                clicks["rightdown"] = {x:x, y:y};
+            }
+        }
     }
 
     if(clicks["move"]){
         if(moveTimer != 0){clearTimeout(moveTimer);}
-        moveTimer = window.setTimeout("moveStop("+clicks["move"]+")", 10);
+        moveTimer = window.setTimeout("moveStop()", 10);
         balls[clicks["move"]].x = x;
         balls[clicks["move"]].y = y;
         balls[clicks["move"]].dx = x - clicks["moved"].x;
@@ -177,11 +200,15 @@ function clickMove(x,y){
 }
 
 document.onkeydown = checkKeyDown;
+document.onkeyup = checkKeyUp;
 
 function checkKeyDown(e) {
 
     e = e || window.event;
     
+    if (e.keyCode == '16'){ //shift
+        freeFormWalls = true;
+    }
     if (e.keyCode == '37'){ //left arrow
         if(paused){
             previousFrame();
@@ -232,5 +259,14 @@ function checkKeyDown(e) {
     }
     if (e.keyCode == '84'){ //t
         toggle("trail");
+    }
+}
+
+function checkKeyUp(e) {
+
+    e = e || window.event;
+    
+    if (e.keyCode == '16'){ //shift
+        freeFormWalls = false;
     }
 }

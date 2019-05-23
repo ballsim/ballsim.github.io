@@ -7,8 +7,8 @@ function nav(content){
 	}
 }
 function openNav(content){
-	document.getElementById("nav").style.height = "300px";
-	if(isMobile()){document.getElementById("nav").style.height = "320px";}
+	document.getElementById("nav").style.height = "320px";
+	if(isMobile()){document.getElementById("nav").style.height = "340px";}
 	document.getElementById("nav").style.width = "200px";
 
 	if(isMobile() == false){
@@ -61,6 +61,7 @@ function reset(){
 	document.getElementById("frictionScale").value = 100; change("frictionScale", "%");
 	document.getElementById("trailLength").value = ""; change("trailLength", "#");
 	document.getElementById("speed").value = 100; change("speed", "%");
+	document.getElementById("elasticity").value = 100; change("elasticity", "%");
 	document.getElementById("redMin").value = 0; change("redMin", "#");
 	document.getElementById("greenMin").value = 0; change("greenMin", "#");
 	document.getElementById("blueMin").value = 0; change("blueMin", "#");

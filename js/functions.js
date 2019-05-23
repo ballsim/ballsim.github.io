@@ -59,6 +59,7 @@ function toggle(variable){
 var basegravityScale = 0.5;
 var basefrictionScale = 0.005;
 var basespeed = 1;
+var baseelasticity = 1;
 
 function change(variable, method){
     if(method == "%"){
@@ -120,9 +121,12 @@ function nextFrame(){
 }
 
 
-function moveStop(ball){
-    balls[ball].dx = 0;
-    balls[ball].dy = 0;
+function moveStop(){
+    if(clicks["move"]){
+        balls[clicks["move"]].dx = 0;
+        balls[clicks["move"]].dy = 0;
+        moveTimer = window.setTimeout("moveStop()", 10);
+    }
 }
 
 function scrollStop(){
