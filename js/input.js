@@ -171,7 +171,7 @@ function clickMove(x,y){
         if(freeFormWalls||isMobile()){
             clicks["rightup"] = {x:x, y:y};
             
-            if(Math.hypot(clicks["rightup"].x-clicks["rightdown"].x, clicks["rightup"].y-clicks["rightdown"].y)>50){
+            if(Math.hypot(clicks["rightup"].x-clicks["rightdown"].x, clicks["rightup"].y-clicks["rightdown"].y)>5){
 
                 walls[walls.length] = {
                     x1:clicks["rightdown"].x, 
