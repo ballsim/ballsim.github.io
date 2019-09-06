@@ -1,164 +1,30 @@
-var imageCount = 0;
-function previewFile(){
-    var file = document.querySelector("input[type=file]").files[0];
-    var reader = new FileReader();
-
-    if(file){
-        reader.readAsDataURL(file);
-    }
-
-    reader.onloadend = function () {
-        imageCount++;
-        document.getElementById("images").innerHTML += "<img src='" + reader.result + "' id='img" + imageCount + "' style='display:none;'/>";
-        standardColorBalls = "image()";
-        document.getElementById("colorCB").checked = false;
-        document.getElementById("imageCB").checked = true;
-    }
-}
-
 function toggle(variable){
-    if(variable == "color"){
-        document.getElementById("colorCB").checked = true;
-        document.getElementById("imageCB").checked = false;
-        if(standardColorBalls == "randomColor()"){
-            document.getElementById("upload").click();
-        }
-        else{
-            standardColorBalls = "randomColor()";
-        }
-    }
-    else{
+	window[variable] = !window[variable];
+    document.getElementById(variable + "Checkbox").checked = window[variable];
 
-    window[variable] = !window[variable];
-    document.getElementById(variable + "CB").checked = window[variable];
-
-    if(variable == "paused"){
-        if(!paused){requestAnimationFrame(draw);}
-        if(paused && isMobile()){
-            document.getElementById("left").style.display = "block";
-            document.getElementById("right").style.display = "block";
-        }
-        else{
-            document.getElementById("left").style.display = "none";
-            document.getElementById("right").style.display = "none";
-        }
-    }
-
-    if(variable == "collisionEdges"){
-        if(!collisionEdges){
-            document.getElementById("wrapEdges").style.display = "initial";
-        }
-        else{
-            document.getElementById("wrapEdges").style.display = "none";
-        }
-    }
-
-    }
+    if(variable == "paused"){if(!paused){frame();}}
 }
 
-var basegravityScale = 0.5;
-var basefrictionScale = 0.005;
-var basespeed = 1;
-var baseelasticity = 1;
-
-function change(variable, method){
-    if(method == "%"){
-        window[variable] = window["base" + variable] * Number(document.getElementById(variable).value)/100;
-    }
-
-    if(method == "#"){
-        window[variable] = Number(document.getElementById(variable).value);
-    }
+function percentage(variable){
+	window[variable] = window["base" + variable] * Number(document.getElementById(variable).value)/100;
 }
 
+function isNumber(n) {return /^-?[\d.]+(?:e-?\d+)?$/.test(n);}
 
-function undo(){
-    for(var i = currentFrame-1; i>0; i--){
-        if(frameHistory[i].balls.length<balls.length){
-            balls.pop();
-            i = 0;
-        }
-        else if(frameHistory[i].walls.length<walls.length){
-            walls.pop();
-            i = 0;
-        }
-    }
+function ClosestPointOnWall(x,y,wall){
+	var dx=x-wall.x1;
+	var dy=y-wall.y1;
+
+	var dxx=wall.x2-wall.x1;
+	var dyy=wall.y2-wall.y1;
+
+	var t=(dx*dxx+dy*dyy)/(dxx*dxx+dyy*dyy);
+
+	var x3=wall.x1+dxx*t;
+	var y3=wall.y1+dyy*t;
+
+	if(t<0){x3=wall.x1;y3=wall.y1;}
+	if(t>1){x3=wall.x2;y3=wall.y2;}
+
+	return {x:x3, y:y3};
 }
-
-function mobileHeld(){
-    mobile.fpsCheck++;
-    if(mobile.fpsCheck%2==1){
-        if(mobile.leftHeld){
-            previousFrame();
-            requestAnimationFrame(mobileHeld);
-        }
-        if(mobile.rightHeld){
-            nextFrame();
-            requestAnimationFrame(mobileHeld);
-        }
-    }
-    else{
-        requestAnimationFrame(mobileHeld);
-    }
-}
-
-function previousFrame(){
-    balls = JSON.parse(JSON.stringify(frameHistory[currentFrame-1].balls));
-    walls = JSON.parse(JSON.stringify(frameHistory[currentFrame-1].walls));
-    currentFrame--;
-    drawobjects();
-}
-function nextFrame(){
-    if(currentFrame == frameHistory.length || currentFrame == frameHistory.length-1){
-        requestAnimationFrame(draw);
-    }
-    else{
-        balls = JSON.parse(JSON.stringify(frameHistory[currentFrame+1].balls));
-        walls = JSON.parse(JSON.stringify(frameHistory[currentFrame+1].walls));
-        currentFrame++;
-        drawobjects();
-    }
-}
-
-
-function moveStop(){
-    if(clicks["move"]){
-        balls[clicks["move"]].dx = 0;
-        balls[clicks["move"]].dy = 0;
-        moveTimer = window.setTimeout("moveStop()", 10);
-    }
-}
-
-function scrollStop(){
-    clicks["scroll"] = {x:".", y:"."};
-}
-
-
-function mode(mode){
-    if(mode == "ball"){
-        document.getElementById("ballIcon").style.display = "block";
-        document.getElementById("wallIcon").style.display = "none";
-        mobile.clickMode = 0;
-    }
-    if(mode == "wall"){
-        document.getElementById("ballIcon").style.display = "none";
-        document.getElementById("wallIcon").style.display = "block";
-        mobile.clickMode = 2;
-    }
-}
-
-var redMin = 0; var greenMin = 0; var blueMin = 0;
-var redMax = 250; var greenMax = 250; var blueMax = 250;
-function randomColor(){return "rgb(" + Math.floor(Math.random()*(redMax-redMin+1)+redMin) + ", " + Math.floor(Math.random()*(greenMax-greenMin+1)+greenMin) + ", " + Math.floor(Math.random()*(blueMax-blueMin+1)+blueMin) + ")";}
-function image(){return "img" + imageCount;}
-
-window.addEventListener('resize', function(event){
-    canvas.setAttribute("width", window.innerWidth);
-    canvas.setAttribute("height", window.innerHeight);
-});
-
-function isMobile(){
-    var check = false;
-    (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
-    return check;
-};

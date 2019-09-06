@@ -1,272 +1,269 @@
-var clicks = {leftdown:".",leftup:".",rightdown:".",rightup:".",leftmove:".",rightmove:".",scroll:".", move:false};
-var scrollTimer = 0;
-var moveTimer = 0;
-var mobile = {clickMode: 0, leftHeld: false, rightHeld: false, heldTimer: 0, fpsCheck: 0};
+var mousePos = {x:".", y:"."};
+var held = {left:".", right:".", shiftKey:".", deleteKey:"."};
+var scrolling = 0;
+var dragging = false;
+var deleting = false;
 
-if(isMobile() == false){
-    canvas.onmousedown = function(e){
-        clickDown(e.clientX, e.clientY, e.button);
-    };
+canvas.onmousedown = function(e){
+    if(held.shiftKey == true){
+		if(e.button == 0){
+			held.left = {x:mousePos.x, y:mousePos.y};
+			dragging = "canvas";
+		}
+		if(e.button == 1){
+			canvasPos = ctx.transformedPoint(0,0);
+	    	canvasWidth = ctx.transformedPoint(canvas.width,canvas.height).x - ctx.transformedPoint(0,0).x;
+	    	canvasHeight = ctx.transformedPoint(canvas.width,canvas.height).y - ctx.transformedPoint(0,0).y;
+		}
+		if(e.button == 2){
+			held.right = {x:mousePos.x, y:mousePos.y};
+		}
+    }
+    else{
+		if(e.button == 0){
+			if(held.deleteKey == true){
+				deleting = true;
 
-    canvas.onmouseup = function(e){
-        clickUp(e.clientX, e.clientY, e.button);
-    };
+				for (var ball = balls.length-1; ball >= 0; ball--){
+		            if(Math.hypot(balls[ball].x - mousePos.x, balls[ball].y - mousePos.y) < balls[ball].radius){
+		                balls.splice(ball,1);
+		            }
+		        }
 
-    canvas.onmousemove = function(e){
-        clickMove(e.clientX, e.clientY);
-    };
+		        for(var wall in walls){
+					var wallPos = ClosestPointOnWall(mousePos.x, mousePos.y, walls[wall]);
+					if(Math.hypot(mousePos.x - wallPos.x, mousePos.y - wallPos.y) < 2.5){
+						walls.splice(wall,1);
+					}
+				}
+			}
+			else{
+				held.left = {x:mousePos.x, y:mousePos.y};
 
-    canvas.onwheel = function(e){
-        clicks["scroll"] = {x:e.clientX, y:e.clientY};
-        if(scrollTimer != 0){clearTimeout(scrollTimer);}
-        scrollTimer = window.setTimeout("scrollStop()", 250);
-
-        if(e.deltaY < 0){
-            if(standardRadiusBalls < 99){standardRadiusBalls += 2;}
-        }
-        if(e.deltaY > 0){
-            if(standardRadiusBalls > 11){standardRadiusBalls -= 2;}
-        }
-    };
-}
-else{
-    canvas.ontouchstart = function(e){
-        clickDown(e.touches[0].clientX, e.touches[0].clientY, mobile.clickMode);
-    };
-
-    canvas.ontouchend = function(e){
-        clickUp(event.changedTouches[event.changedTouches.length-1].pageX, event.changedTouches[event.changedTouches.length-1].pageY, mobile.clickMode);
-    };
-
-    canvas.ontouchmove = function(e){
-        clickMove(e.touches[0].clientX, e.touches[0].clientY);
-    };
-
-    document.getElementById("slider").oninput = function() {
-        clicks["scroll"] = {x:canvas.width/2, y:canvas.height/1.3};
-        if(scrollTimer != 0){clearTimeout(scrollTimer);}
-        scrollTimer = window.setTimeout("scrollStop()", 250);
-
-        standardRadiusBalls = Number(document.getElementById("slider").value);
-    };
-
-    document.getElementById("left").ontouchstart = function(e){
-        previousFrame();
-        mobile.leftHeld = true;
-        mobile.heldTimer = window.setTimeout("mobileHeld()", 500);
-    };
-
-    document.getElementById("left").ontouchend = function(e){
-        mobile.leftHeld = false;
-        clearTimeout(mobile.heldTimer);
-    };
-
-    document.getElementById("right").ontouchstart = function(e){
-        nextFrame();
-        mobile.rightHeld = true;
-        mobile.heldTimer = window.setTimeout("mobileHeld()", 500);
-    };
-
-    document.getElementById("right").ontouchend = function(e){
-        mobile.rightHeld = false;
-        clearTimeout(mobile.heldTimer);
-    };
+				for (var ball = balls.length-1; ball >= 0; ball--){
+		            if(Math.hypot(balls[ball].x - held.left.x, balls[ball].y - held.left.y) < balls[ball].radius){
+		                balls[ball].x = mousePos.x;
+		                balls[ball].y = mousePos.y;
+		                balls[ball].dx = 0;
+		                balls[ball].dy = 0;
+		                dragging = Number(ball);
+		                ball = 0;
+		            }
+		        }
+			}
+		}
+		if(e.button == 1){
+			standardRadiusBalls = 25;
+			if(scrolling != 0){clearTimeout(scrolling);}
+        	scrolling = window.setTimeout(function(){scrolling = 0}, 250);
+		}
+		if(e.button == 2){
+			held.right = {x:mousePos.x, y:mousePos.y};
+		}
+    }
 }
 
+canvas.onmouseup = function(e){
+    if(held.shiftKey == true){
+		if(e.button == 0){
+			held.left = ".";
+			dragging = false;
+		}
+		if(e.button == 2){
+			walls[walls.length] = {
+	            x1:held.right.x, 
+	            y1:held.right.y,
+	            x2:mousePos.x,
+	            y2:mousePos.y
+	        };
 
-function clickDown(x,y,mode){
-    if(mode == 0){
-        clicks["leftdown"] = {x:x, y:y};
-        clicks["leftheld"] = true;
-
-        if(clicks["leftdown"].x < standardRadiusBalls){clicks["leftdown"].x = standardRadiusBalls;}
-        if(clicks["leftdown"].x > canvas.width - standardRadiusBalls){clicks["leftdown"].x = canvas.width - standardRadiusBalls;}
-        if(clicks["leftdown"].y < standardRadiusBalls){clicks["leftdown"].y = standardRadiusBalls;}
-        if(clicks["leftdown"].y > canvas.height - standardRadiusBalls){clicks["leftdown"].y = canvas.height - standardRadiusBalls;}
-
-        for (var ball in balls) {
-            if (Math.hypot(balls[ball].x - x, balls[ball].y - y) < balls[ball].radius){
-                clicks["move"] = ball;
-                clicks["moved"] = {x:x, y:y};
-                balls[ball].x = x;
-                balls[ball].y = y;
-                balls[ball].dx = 0;
-                balls[ball].dy = 0;
-                clicks["leftdown"] = {x:".", y:"."};
-                if(moveTimer != 0){clearTimeout(moveTimer);}
-                moveTimer = window.setTimeout("moveStop()", 10);
-            }
-        }
+			held.right = ".";
+		}
     }
-    if(mode == 2){
-        clicks["rightdown"] = {x:x, y:y};
-        clicks["rightheld"] = true;
-    }
-    if(mode == 1){
-        standardRadiusBalls = 30;
+    else{
+		if(e.button == 0){
+			if(dragging === false && !deleting){
+				balls[balls.length] = {
+	                radius:standardRadiusBalls,
+	                mass:standardRadiusBalls**3,
+	                dx:-(held.left.x-mousePos.x)/30,
+	                dy:-(held.left.y-mousePos.y)/30,
+	                x:held.left.x,
+	                y:held.left.y,
+	                color:"rgb(" + Math.floor(Math.random()*250) + ", " + Math.floor(Math.random()*250) + ", " + Math.floor(Math.random()*250) + ")",
+	                toi:1
+	            };
+	        }
 
-        clicks["scroll"] = {x:x, y:y};
-        if(scrollTimer != 0){clearTimeout(scrollTimer);}
-        scrollTimer = window.setTimeout("scrollStop()", 500);
-    }
+			held.left = ".";
+			dragging = false;
+			deleting = false;
+		}
+		if(e.button == 2){
+			walls[walls.length] = {
+	            x1:held.right.x, 
+	            y1:held.right.y,
+	            x2:mousePos.x,
+	            y2:mousePos.y
+	        };
 
-    drawobjects();
+			held.right = ".";
+		}
+    }
 }
 
-function clickUp(x,y,mode){
-    if(mode == 0){
-        clicks["leftup"] = {x:x, y:y};
-        clicks["leftheld"] = false;
+canvas.onmousemove = function(e){
+	mousePos = ctx.transformedPoint(e.clientX - document.getElementById("canvas").getBoundingClientRect().left, e.clientY - document.getElementById("canvas").getBoundingClientRect().top);
 
-        if(clicks["move"] === false){
-            balls[balls.length] = {
-                radius:standardRadiusBalls,
-                mass:standardRadiusBalls**3,
-                dx:-(clicks["leftdown"].x-clicks["leftup"].x)/30, 
-                dy:-(clicks["leftdown"].y-clicks["leftup"].y)/30,
-                x:clicks["leftdown"].x,
-                y:clicks["leftdown"].y,
-                angularVelocity:0,
-                angularAngle:0,
-                color:eval(standardColorBalls),
-            };
-            if(balls.length == 1){
-                balls[0].angularVelocity = 10;
-            }
-        }
-        else{
-            clicks["move"] = false;
-            clearTimeout(moveTimer);
-        }
-
-        clicks["leftdown"] = {x:".", y:"."};
-        clicks["leftmove"] = {x:".", y:"."};
+	if(dragging == "canvas"){
+	    ctx.translate(mousePos.x-held.left.x,mousePos.y-held.left.y);
+	    drawObjects();
+	}
+	if(isNumber(dragging)){
+        balls[dragging].x = mousePos.x;
+        balls[dragging].y = mousePos.y;
     }
-    if(mode == 2){
-        clicks["rightup"] = {x:x, y:y};
-        clicks["rightheld"] = false;
+	if(held.shiftKey == true){
+		if(Math.hypot(held.right.x - mousePos.x, held.right.y - mousePos.y) >= 5){
+			walls[walls.length] = {
+		        x1:held.right.x, 
+		        y1:held.right.y,
+		        x2:mousePos.x,
+	            y2:mousePos.y
+		    };
 
-        walls[walls.length] = {
-            x1:clicks["rightdown"].x, 
-            y1:clicks["rightdown"].y,
-            x2:clicks["rightup"].x,
-            y2:clicks["rightup"].y
-        };
+		    held.right = mousePos;
+		}
+	}
+	if(deleting){
+		for (var ball = balls.length-1; ball >= 0; ball--){
+			if(Math.hypot(balls[ball].x - mousePos.x, balls[ball].y - mousePos.y) < balls[ball].radius){
+				balls.splice(ball,1);
+			}
+		}
 
-        clicks["rightdown"] = {x:".", y:"."};
-        clicks["rightmove"] = {x:".", y:"."};
-    }
-
-    drawobjects();
+		for(var wall in walls){
+			for(var wall in walls){
+				var wallPos = ClosestPointOnWall(mousePos.x, mousePos.y, walls[wall]);
+				if(Math.hypot(mousePos.x - wallPos.x, mousePos.y - wallPos.y) < 2.5){
+					walls.splice(wall,1);
+				}
+			}
+		}
+	}
 }
 
-function clickMove(x,y){
-    if(clicks["leftheld"]){
-        clicks["leftmove"] = {x:x, y:y};
+canvas.onwheel = function(e){
+	var delta = e.wheelDelta ? e.wheelDelta/40 : e.detail ? -e.detail : 0;
+	if(held.shiftKey == true){
+	    ctx.translate(mousePos.x,mousePos.y);
+	    ctx.scale(Math.pow(1.01,delta),Math.pow(1.01,delta));
+	    ctx.translate(-mousePos.x,-mousePos.y);
+	    drawObjects();
     }
+    else{
+    	if(standardRadiusBalls + delta>0){
+    		if(scrolling != 0){clearTimeout(scrolling);}
+        	scrolling = window.setTimeout(function(){scrolling = 0}, 250);
 
-    if(clicks["rightheld"]){
-        clicks["rightmove"] = {x:x, y:y};
-
-        if(freeFormWalls||isMobile()){
-            clicks["rightup"] = {x:x, y:y};
-            
-            if(Math.hypot(clicks["rightup"].x-clicks["rightdown"].x, clicks["rightup"].y-clicks["rightdown"].y)>5){
-
-                walls[walls.length] = {
-                    x1:clicks["rightdown"].x, 
-                    y1:clicks["rightdown"].y,
-                    x2:clicks["rightup"].x,
-                    y2:clicks["rightup"].y
-                };
-
-                clicks["rightdown"] = {x:x, y:y};
-            }
-        }
+			standardRadiusBalls += delta;
+		}
     }
-
-    if(clicks["move"]){
-        if(moveTimer != 0){clearTimeout(moveTimer);}
-        moveTimer = window.setTimeout("moveStop()", 10);
-        balls[clicks["move"]].x = x;
-        balls[clicks["move"]].y = y;
-        balls[clicks["move"]].dx = x - clicks["moved"].x;
-        balls[clicks["move"]].dy = y - clicks["moved"].y;
-
-        clicks["moved"] = {x:x, y:y};
-    }
-
-    drawobjects();
 }
+
+
 
 document.onkeydown = checkKeyDown;
-document.onkeyup = checkKeyUp;
 
 function checkKeyDown(e) {
 
     e = e || window.event;
     
-    if (e.keyCode == '16'){ //shift
-        freeFormWalls = true;
+    if (e.keyCode == "16"){ //shift
+		held.shiftKey = true;
     }
-    if (e.keyCode == '37'){ //left arrow
+    if (e.keyCode == "37"){ //left arrow
         if(paused){
-            previousFrame();
+            balls = JSON.parse(JSON.stringify(frames[currentFrame-1].balls));
+            walls = JSON.parse(JSON.stringify(frames[currentFrame-1].walls));
+            currentFrame--;
+            drawObjects();
         }
     }
-    if (e.keyCode == '39'){ //right arrow
+    if (e.keyCode == "39"){ //right arrow
         if(paused){
-            nextFrame();
+            if(currentFrame > frames.length - 2){
+            	requestAnimationFrame(frame);
+            }
+            else{
+            	balls = JSON.parse(JSON.stringify(frames[currentFrame+1].balls));
+            	walls = JSON.parse(JSON.stringify(frames[currentFrame+1].walls));
+            	currentFrame++;
+            	drawObjects();
+            }
         }
     }
-    if (e.keyCode == 46){ //delete
-        undo();
+    if (e.keyCode == "46"){ //delete
+    	held.deleteKey = true;
     }
 
-    if (e.keyCode == '72'){ //h
-        if(document.getElementById("overlay").style.display == "none"){document.getElementById("overlay").style.display = "block";}
-        else{document.getElementById("overlay").style.display = "none";}
+    if (e.keyCode == "82"){ //r
+    	if(held.shiftKey == true){
+    		var fullCanvasP1 = ctx.transformedPoint(0,0);
+			var fullCanvasP2 = ctx.transformedPoint(canvas.width,canvas.height);
+			var canvasP1 = canvasPos;
+			var canvasP2 = {x:canvasP1.x+canvasWidth, y:canvasP1.y+canvasHeight};
+    		ctx.translate(fullCanvasP1.x-canvasP1.x,fullCanvasP1.y-canvasP1.y);
+	    	ctx.scale((fullCanvasP2.x-fullCanvasP1.x)/(canvasP2.x-canvasP1.x),(fullCanvasP2.y-fullCanvasP1.y)/(canvasP2.y-canvasP1.y));
+	    	fullCanvasP1 = ctx.transformedPoint(0,0);
+			fullCanvasP2 = ctx.transformedPoint(canvas.width,canvas.height);
+			canvasP1 = canvasPos;
+			canvasP2 = {x:canvasP1.x+canvasWidth, y:canvasP1.y+canvasHeight};
+	    	ctx.translate(fullCanvasP1.x-canvasP1.x,fullCanvasP1.y-canvasP1.y);
+	    	drawObjects();
+    	}
+    	else{
+	    	var p1 = ctx.transformedPoint(0,0);
+			var p2 = ctx.transformedPoint(canvas.width,canvas.height);
+		    ctx.clearRect(p1.x,p1.y,p2.x-p1.x,p2.y-p1.y);
+	    	ctx.setTransform(1, 0, 0, 1, 0, 0);
+	    	canvasPos = ctx.transformedPoint(0,0);
+		    canvasWidth = ctx.transformedPoint(canvas.width,canvas.height).x - ctx.transformedPoint(0,0).x;
+		    canvasHeight = ctx.transformedPoint(canvas.width,canvas.height).y - ctx.transformedPoint(0,0).y;
+	        balls = [];
+	        walls = [];
+	    }
     }
-    if (e.keyCode == '78'){ //n
-        var radius = Math.floor(Math.random() * (100 -9)) + 10;
-        balls[balls.length] = {
-            radius:radius,
-            mass:radius**3,
-            dx:Math.floor(Math.random() * (25)) + 1,
-            dy:Math.floor(Math.random() * (25)) + 1,
-            x:Math.floor(Math.random() * canvas.width),
-            y:Math.floor(Math.random() * canvas.width),
-            color:eval(standardColorBalls),
-        };
+    if (e.keyCode == "67"){ //c
+        toggle("ballCollision");
+        toggle("wallCollision");
     }
-    if (e.keyCode == '82'){ //r
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        balls = [];
-        walls = [];
-    }
-    if (e.keyCode == '67'){ //c
-        toggle("collisionBalls");
-        toggle("collisionWalls");
-    }
-    if (e.keyCode == '70'){ //f
+    if (e.keyCode == "70"){ //f
         toggle("friction");
     }
-    if (e.keyCode == '71'){ //g
+    if (e.keyCode == "71"){ //g
         toggle("gravity");
     }
-    if (e.keyCode == '80'){ //p
+    if (e.keyCode == "80"){ //p
         toggle("paused");
     }
-    if (e.keyCode == '84'){ //t
+    if (e.keyCode == "84"){ //t
         toggle("trail");
     }
 }
+
+document.onkeyup = checkKeyUp;
 
 function checkKeyUp(e) {
 
     e = e || window.event;
     
-    if (e.keyCode == '16'){ //shift
-        freeFormWalls = false;
+    if (e.keyCode == "16"){ //shift
+        held.shiftKey = ".";
+        dragging = false;
+    }
+    if (e.keyCode == "46"){ //delete
+        held.deleteKey = ".";
+        deleting = false;
     }
 }

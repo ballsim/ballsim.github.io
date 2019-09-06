@@ -3,199 +3,43 @@ body{
     padding: 0;
     width: 100%;
     height: 100%;
-    overscroll-behavior-y: contain;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 15px;
-}
-#canvas{
-    display: block;
-    position: absolute;
-}
-#overlay{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-}
-
-#nav{
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    border: 3px solid black;
-    border-radius: 5px;
-    width: 35px;
-    height: 35px;
-    background-color: white;
-    z-index: 2;
-
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+    color: black;
+    background-color: rgb(204,204,204);
     user-select: none;
 }
+#canvas{
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    background-color: white;
+    outline: 1px solid black;
+}
+
+
 #settings{
-    position: absolute;
-    display: none;
-    top: 35px;
-    left: 5px;
-}
-#info{
-    position: absolute;
-    display: none;
-    top: 35px;
-    left: 5px;
+    margin-top: 25px;
+    margin-left: 25px;
+    width: 200px;
 }
 
-.icon{
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    width: 25px;
-    height: 25px;
-    z-index: 2;
-}
-#resetIcon{
-    display: none;
-    left: 170px;
-}
-#infoIcon{
-    display: none;
-    left: 35px;
-}
-#undoIcon{
-    display: none;
-    left: 35px; 
-}
-#ballIcon{
-    display: none;
-    left: 70px; 
-}
-#wallIcon{
-    display: none;
-    left: 70px; 
-}
 
-#upload{
-    display: none;
+input[type='checkbox']{
+    visibility: hidden;
 }
-#uploadTxt:hover{
-    cursor: pointer;
-    text-decoration: underline;
-}
-
-#left{
-    position: absolute;
-    display: none;
-    height: 100%;
-    width: 50%;
-    left: 0;
-    z-index: 1;
-}
-#right{
-    position: absolute;
-    display: none;
-    height: 100%;
-    width: 50%;
-    left: 50%;
-    z-index: 1;
-}
-
-.slider {
-    top: 10px;
-    display: none;
-    position: absolute;
-    right: 0;
-    left: 105px;
-    -webkit-appearance: none;
-    width: 60px;
-    height: 10px;
-    border-radius: 5px;
-    background: #d3d3d3;
+input[type=number]{
+    border: 1px solid black;
+    background-color: white;
     outline: none;
-    -webkit-transition: .2s;
+    width: 24px;
+    height: 14px;
 }
-.slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: black;
-}
-.slider::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: black;
-}
-
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
     -webkit-appearance: none; 
     margin: 0; 
 }
 
-input[type=number]{
-    border: 1px solid black;
-    outline: none;
-    width: 24px;
-    height: 14px;
-}
-
-.input{
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin-left: 80px;
-}
-.inputNoLabel{
-    position: relative;
-}
-.inputMin{
-    position: absolute;
-    top: -1px;
-    left: 80px;
-}
-.inputMax{
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin-left: 120px;
-}
-.inputTxt{
-    margin-top: -17px;
-    margin-left: 30px;
-}
-
-#collisionEdgesCB{
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin-left: 80px;
-}
-
-#collisionWalls{
-    position: absolute;
-    margin-top: 3px;
-    left: 0;
-    margin-left: 80px;
-}
-#wrapEdges{
-    position: absolute;
-    left: 0;
-    margin-left: 80px;
-}
-.CBRihgtTxt{
-    margin-top: -1px;
-}
-
-
-
-input[type='checkbox']{
-    visibility: hidden;
-}
 
 .container{
     position: relative;
@@ -203,8 +47,8 @@ input[type='checkbox']{
 }
 .checkmark{
     position: absolute;
-    top: 2px;
     left: 0;
+    top: 2px;
     height: 10px;
     width: 10px;
     background: white;
@@ -214,11 +58,11 @@ input[type='checkbox']{
     content: "";
     display: none;
     position: absolute;
-    width: 5px;
+    width: 6px;
     height: 2px;
     background: transparent;
-    top: 2.5px;
-    left: 1.5px;
+    top: 2px;
+    left: 1px;
     border: 2px solid black;
     border-top: none;
     border-right: none;
@@ -228,6 +72,22 @@ input[type='checkbox']{
     display: block;
 }
 
-#wrapEdges{
-    display: none;
+
+.input{
+    position: absolute;
+    top: -1px;
+    left: 100px;
+}
+.inputTxt{
+    position: absolute;
+    margin-top: -18px;
+    margin-left: 30px;
+}
+
+
+.checkboxRight{
+    position: absolute;
+    left: 0;
+    margin-left: 125px;
+    margin-top: 1px;
 }

@@ -1,113 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=yes, minimal-ui">
-    <meta name="mobile-web-app-capable" content="yes">
-    <title>Balls</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Ball Simulator</title>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
 </head>
 <body>
-    <div id="overlay">
-        <div id="images">
+    <div id="settings">
+        <label class="container" for="gravityCheckbox"><b>G</b>ravity:<div class="input"><input type="number" value="100" id="gravityScale" onblur="percentage('gravityScale')"><div class="inputTxt">%</div></div>
+            <input type="checkbox" id="gravityCheckbox" onchange="toggle('gravity')"/>
+            <span class="checkmark"></span>
+        </label>
+        <br>
+        <label class="container" for="frictionCheckbox"><b>F</b>riction:<div class="input"><input type="number" value="100" id="frictionScale" onblur="percentage('frictionScale')"><div class="inputTxt">%</div></div>
+            <input type="checkbox" id="frictionCheckbox" onchange="toggle('friction')" checked/>
+            <span class="checkmark"></span>
+        </label>
+        <br>
+        <label class="container">Elasticity:<div class="input"><input type="number" value="100" id="elasticity" onblur="percentage('elasticity')"><div class="inputTxt">%</div></div>
+            <input type="checkbox"/>
+        </label>
+        <br><br>
+        <label class="container" for="trailCheckbox"><b>T</b>rail
+            <input type="checkbox" id="trailCheckbox" onchange="toggle('trail')"/>
+            <span class="checkmark"></span>
+        </label>
+        <br>
+        <label class="container" for="pausedCheckbox"><b>P</b>aused
+            <input type="checkbox" id="pausedCheckbox" onchange="toggle('paused')"/>
+            <span class="checkmark"></span>
+        </label>
+        <br><br>
+        <b>C</b>ollision with:<br>
+        <label class="container" for="ballCollisionCheckbox">Balls
+            <input type="checkbox" id="ballCollisionCheckbox" onchange="toggle('ballCollision')" checked/>
+            <span class="checkmark"></span>
+        </label>
+        <label class="container checkboxRight" for="wallCollisionCheckbox">Walls
+            <input type="checkbox" id="wallCollisionCheckbox" onchange="toggle('wallCollision')" checked/>
+            <span class="checkmark"></span>
+        </label>
+        <br>
+        <label class="container" for="edgeCollisionCheckbox">Edges
+            <input type="checkbox" id="edgeCollisionCheckbox" onchange="toggle('edgeCollision')" checked/>
+            <span class="checkmark"></span>
+        </label>
+        <label class="container checkboxRight" for="wrapEdgesCheckbox">Wrap
+            <input type="checkbox" id="wrapEdgesCheckbox" onchange="toggle('wrapEdges')" checked/>
+            <span class="checkmark"></span>
+        </label>
 
-        </div>
+        <br><br>
 
-        <div id ="nav">
-            <img src="icons/Settings.png" id="settingsIcon" class="icon" onclick="nav('settings')"/>
-
-            <div id="settings">
-                <label class="container" for="gravityCB"><b>G</b>ravity: <div class="input"><input type="number" id="gravityScale" value="100" onblur="change('gravityScale', '%')"><div class="inputTxt">%</div></div>
-                    <input type="checkbox" id="gravityCB" onchange="toggle('gravity')"/>
-                    <span class="checkmark"></span>
-                </label>
-                <br>
-                <label class="container" for="frictionCB"><b>F</b>riction: <div class="input"><input type="number" id="frictionScale" value="100" onblur="change('frictionScale', '%')"><div class="inputTxt">%</div></div>
-                    <input type="checkbox" id="frictionCB" onchange="toggle('friction')" checked/>
-                    <span class="checkmark"></span>
-                </label>
-                <br>
-                <label class="container" for="trailCB"><b>T</b>rail: <div class="input"><input type="number" id="trailLength" value="" onblur="change('trailLength', '#')"><div class="inputTxt">frames</div></div>
-                    <input type="checkbox" id="trailCB" onchange="toggle('trail')"/>
-                    <span class="checkmark"></span>
-                </label>
-                <br>
-                <label class="container"><b>P</b>aused
-                    <input type="checkbox" id="pausedCB" onchange="toggle('paused')"/>
-                    <span class="checkmark"></span>
-                </label>
-                <br>
-                <b>C</b>ollision with:<br>
-
-                <label class="container" id="collisionBalls">Balls
-                    <input type="checkbox" id="collisionBallsCB" onchange="toggle('collisionBalls')" checked/>
-                    <span class="checkmark"></span>
-                </label>
-                <label class="container" id="collisionWalls"><div class="CBRightTxt">Walls</div>
-                    <input type="checkbox" id="collisionWallsCB" onchange="toggle('collisionWalls')" checked/>
-                    <span class="checkmark"></span>
-                </label><br>
-                <label class="container" id="collisionEdges">Edges
-                    <input type="checkbox" id="collisionEdgesCB" onchange="toggle('collisionEdges')" checked/>
-                    <span class="checkmark"></span>
-                </label>
-                <label class="container" id="wrapEdges"><div class="CBRightTxt">Wrap</div>
-                    <input type="checkbox" id="wrapEdgesCB" onchange="toggle('wrapEdges')"/>
-                    <span class="checkmark"></span>
-                </label>
-                <br>
-                <label class="inputNoLabel">Speed: <div class="input"><input type="number" id="speed" value="100" onblur="change('speed', '%')"><div class="inputTxt">%</div></div></label><br>
-                <label class="inputNoLabel">Elasticity: <div class="input"><input type="number" id="elasticity" value="100" onblur="change('elasticity', '%')"><div class="inputTxt">%</div></div></label><br>
-
-                Color:<br>
-
-                <label class="container">Random RGB color:
-                    <input type="checkbox" id="colorCB" onchange="toggle('color')" checked/>
-                    <span class="checkmark"></span>
-                </label>
-                <label class="inputNoLabel">Red: <div class="inputMin"><input type="number" id="redMin" value="0" onblur="change('redMin', '#')"><div class="inputTxt">-</div></div><div class="inputMax"><input type="number" id="redMax" value="250" onblur="change('redMax', '#')"><div class="inputTxt"></div></div></label><br>
-                <label class="inputNoLabel">Green: <div class="inputMin"><input type="number" id="greenMin" value="0" onblur="change('greenMin', '#')"><div class="inputTxt">-</div></div><div class="inputMax"><input type="number" id="greenMax" value="250" onblur="change('greenMax', '#')"><div class="inputTxt"></div></div></label><br>
-                <label class="inputNoLabel">Blue: <div class="inputMin"><input type="number" id="blueMin" value="0" onblur="change('blueMin', '#')"><div class="inputTxt">-</div></div><div class="inputMax"><input type="number" id="blueMax" value="250" onblur="change('blueMax', '#')"><div class="inputTxt"></div></div></label><br>
-
-                <label class="container" for=""><label for="imageCB">Image:</label> <a onclick="document.getElementById('upload').click();" id="uploadTxt">Upload image</a><label for="imageCB">
-                    <input type="checkbox" id="imageCB" onchange="toggle('color')"/>
-                    <span class="checkmark"></span></label>
-                </label>
-                <input type="file" accept="image/*" onchange="previewFile()" id="upload">
-            </div>
-
-            <div id="info">
-                Leftclick: Spawn balls<br>
-                Rightclick: Draw walls<br>
-                Hold shift to draw freeform<br>
-                Scroll: Adjust ball radius<br><br>
-                Arrow keys while paused:<br>Next/Previous frame<br>
-                R: Reset<br>
-                N: Spawn a new ball<br>
-                H: Hide the overlay<br>
-                Delete: Undo last ball/wall<br><br>
-                Any bold letter in the settings menu indicates a hotkey to toggle the checkbox
-            </div>
-
-            <img src="icons/Info.png" id="infoIcon" class="icon" onclick="nav('info')"/>
-
-            <img src="icons/Undo.png" id="undoIcon" class="icon" onclick="undo()"/>
-
-            <img src="icons/Ball.png" id="ballIcon" class="icon" onclick="mode('wall')"/>
-            <img src="icons/Wall.png" id="wallIcon" class="icon" onclick="mode('ball')"/>
-
-            <input type="range" min="7" max="70" value="20" class="slider" id="slider">
-
-            <img src="icons/Reset.png" id="resetIcon" class="icon" onclick="reset()"/>
-        </div>
-    </div>
-
-    <div id="left"></div>
-    <div id="right"></div>
+        Bold letters indicate toggles<br><br>
+        Leftclick: spawn a ball<br>
+        +Shift: Pan the screen<br>
+        +Delete: Remove objects<br><br>
+        Rightclick: draw a wall<br>
+        +Shift: Draw wall freely<br><br>
+        Scroll: adjust ball radius<br>
+        +Shift: Zoom the canvas<br><br>
+        Scrollclick: reset ball radius<br>
+        +Shift: Adjust edge border<br><br>
+        Arrow keys while paused:<br>
+        Next/Previous frame<br><br>
+        R: Reset the canvas<br>
+        +Shift: Reset the screen<br><br>
+    <div>
 
     <canvas id="canvas"></canvas>
-</body>
-    <script src="js/functions.js"></script>
-    <script src="js/nav.js"></script>
+
+    <script src="js/transform.js"></script>
     <script src="js/input.js"></script>
+    <script src="js/functions.js"></script>
     <script src="js/script.js"></script>
+</body>
 </html>
