@@ -1,8 +1,6 @@
 function toggle(variable){
 	window[variable] = !window[variable];
     document.getElementById(variable + "Checkbox").checked = window[variable];
-
-    if(variable == "paused"){if(!paused){frame();}}
 }
 
 function percentage(variable){

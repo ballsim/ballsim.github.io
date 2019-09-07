@@ -34,17 +34,20 @@ window.onload = function() {
 }
 
 function frame(){
-	frames.length = currentFrame;
-	frames.push({balls: JSON.parse(JSON.stringify(balls)), walls: JSON.parse(JSON.stringify(walls))});
-	currentFrame++;
+	if(!paused){
+		frames.length = currentFrame;
+		frames.push({balls: JSON.parse(JSON.stringify(balls)), walls: JSON.parse(JSON.stringify(walls))});
+		currentFrame++;
 
-	if(gravity){applyGravity();}
-	if(friction){applyFriction();}
-	moveBalls();
-	collision();
+		if(gravity){applyGravity();}
+		if(friction){applyFriction();}
+		moveBalls();
+		collision();
+	}
+	
 	drawObjects();
 
-	if(!paused){requestAnimationFrame(frame);}
+	requestAnimationFrame(frame);
 }
 
 function applyGravity(){
