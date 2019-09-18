@@ -70,8 +70,6 @@ function moveBalls(){
 		if(Number(ball) !== dragging){
 			balls[ball].x += balls[ball].dx*balls[ball].toi;
 			balls[ball].y += balls[ball].dy*balls[ball].toi;
-
-			balls[ball].toi = 1;
 		}
 	}
 }
@@ -180,15 +178,25 @@ function drawObjects(){
 		if(Number(ball)!==dragging){ctx.stroke();}
 	}
 
-	ctx.strokeStyle = "black";
-	ctx.fillStyle = "black";
+	ctx.strokeStyle = "white";
+	ctx.fillStyle = "white";
 
 	for (var wall in walls) { 
 		ctx.beginPath();
 		ctx.moveTo(walls[wall].x1,walls[wall].y1);
 		ctx.lineTo(walls[wall].x2,walls[wall].y2);
+		ctx.closePath();
 		ctx.lineWidth = 5;
 		ctx.stroke();
+
+		ctx.beginPath();
+		ctx.arc(walls[wall].x1,walls[wall].y1,2,0,Math.PI*2);
+		ctx.closePath();
+		ctx.fill();
+		ctx.beginPath();
+		ctx.arc(walls[wall].x2,walls[wall].y2,2,0,Math.PI*2);
+		ctx.closePath();
+		ctx.fill();
 	}
 
 	if(!trail){
@@ -196,6 +204,7 @@ function drawObjects(){
 			ctx.beginPath();
 			ctx.moveTo(held.left.x,held.left.y);
 			ctx.lineTo(mousePos.x,mousePos.y);
+			ctx.closePath();
 			ctx.lineWidth = 3;
 			ctx.stroke();
 			var angle = Math.atan2(mousePos.y-held.left.y,mousePos.x-held.left.x);
@@ -205,6 +214,7 @@ function drawObjects(){
 			ctx.lineTo(mousePos.x-1*Math.cos(angle+Math.PI/7),mousePos.y-1*Math.sin(angle+Math.PI/7));
 			ctx.lineTo(mousePos.x, mousePos.y);
 			ctx.lineTo(mousePos.x-1*Math.cos(angle-Math.PI/7),mousePos.y-1*Math.sin(angle-Math.PI/7));
+			ctx.closePath();
 			ctx.lineWidth = 11;
 			ctx.stroke();
 			ctx.fill();
@@ -216,20 +226,34 @@ function drawObjects(){
 			ctx.lineWidth = 1;
 			ctx.stroke();
 		}
-		ctx.beginPath();
-		ctx.moveTo(held.right.x,held.right.y);
-		ctx.lineTo(mousePos.x,mousePos.y);
-		ctx.lineWidth = 5;
-		ctx.stroke();
+		if(held.right !== "."){
+			ctx.beginPath();
+			ctx.moveTo(held.right.x,held.right.y);
+			ctx.lineTo(mousePos.x,mousePos.y);
+			ctx.closePath();
+			ctx.lineWidth = 5;
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.arc(held.right.x,held.right.y,2,0,Math.PI*2);
+			ctx.closePath();
+			ctx.fill();
+			ctx.beginPath();
+			ctx.arc(mousePos.x,mousePos.y,2,0,Math.PI*2);
+			ctx.closePath();
+			ctx.fill();
+		}
 	}
 
-	ctx.clearRect(fullCanvasP1.x,fullCanvasP1.y,canvasP1.x-fullCanvasP1.x,fullCanvasP2.y-fullCanvasP1.y);
-	ctx.clearRect(fullCanvasP1.x,fullCanvasP1.y,fullCanvasP2.x-fullCanvasP1.x,canvasP1.y-fullCanvasP1.y);
-	ctx.clearRect(fullCanvasP2.x,fullCanvasP2.y,-(fullCanvasP2.x-canvasP2.x),-(fullCanvasP2.y-fullCanvasP1.y));
-	ctx.clearRect(fullCanvasP2.x,fullCanvasP2.y,-(fullCanvasP2.x-fullCanvasP1.x),-(fullCanvasP2.y-canvasP2.y));
+	ctx.fillStyle = "rgb(51,51,51)";
+	ctx.beginPath(); ctx.rect(fullCanvasP1.x,fullCanvasP1.y,canvasP1.x-fullCanvasP1.x,fullCanvasP2.y-fullCanvasP1.y); ctx.closePath(); ctx.fill();
+	ctx.beginPath(); ctx.rect(fullCanvasP1.x,fullCanvasP1.y,fullCanvasP2.x-fullCanvasP1.x,canvasP1.y-fullCanvasP1.y); ctx.closePath(); ctx.fill();
+	ctx.beginPath(); ctx.rect(fullCanvasP2.x,fullCanvasP2.y,-(fullCanvasP2.x-canvasP2.x),-(fullCanvasP2.y-fullCanvasP1.y)); ctx.closePath(); ctx.fill();
+	ctx.beginPath(); ctx.rect(fullCanvasP2.x,fullCanvasP2.y,-(fullCanvasP2.x-fullCanvasP1.x),-(fullCanvasP2.y-canvasP2.y)); ctx.closePath(); ctx.fill();
 
 	ctx.beginPath();
 	ctx.rect(canvasP1.x,canvasP1.y,canvasP2.x-canvasP1.x,canvasP2.y-canvasP1.y);
+	ctx.closePath();
 	ctx.lineWidth = (fullCanvasP2.y-fullCanvasP1.y)/500;
 	ctx.stroke();
 }

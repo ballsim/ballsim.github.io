@@ -90,7 +90,7 @@ canvas.onmouseup = function(e){
 	                dy:-(held.left.y-mousePos.y)/30,
 	                x:held.left.x,
 	                y:held.left.y,
-	                color:"rgb(" + Math.floor(Math.random()*250) + ", " + Math.floor(Math.random()*250) + ", " + Math.floor(Math.random()*250) + ")",
+	                color:"rgb(" + Math.floor(Math.random()*204+51) + ", " + Math.floor(Math.random()*204+51) + ", " + Math.floor(Math.random()*204+51) + ")",
 	                toi:1
 	            };
 	        }
