@@ -18,6 +18,8 @@ function ClosestPointOnWall(x,y,wall){
 
 	var t=(dx*dxx+dy*dyy)/(dxx*dxx+dyy*dyy);
 
+	if(isNaN(t)){t=0;}
+
 	var x3=wall.x1+dxx*t;
 	var y3=wall.y1+dyy*t;
 
