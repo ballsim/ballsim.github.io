@@ -184,22 +184,20 @@ function checkKeyDown(e) {
     }
     if (e.keyCode == "37"){ //left arrow
         if(paused){
-            balls = JSON.parse(JSON.stringify(frames[currentFrame-1].balls));
-            walls = JSON.parse(JSON.stringify(frames[currentFrame-1].walls));
-            currentFrame--;
-            drawObjects();
+        	currentFrame--;
+            balls = JSON.parse(JSON.stringify(frames[currentFrame].balls));
+            walls = JSON.parse(JSON.stringify(frames[currentFrame].walls));
         }
     }
     if (e.keyCode == "39"){ //right arrow
         if(paused){
             if(currentFrame > frames.length - 2){
-            	requestAnimationFrame(frame);
+            	pausedFrame = true;
             }
             else{
-            	balls = JSON.parse(JSON.stringify(frames[currentFrame+1].balls));
-            	walls = JSON.parse(JSON.stringify(frames[currentFrame+1].walls));
             	currentFrame++;
-            	drawObjects();
+            	balls = JSON.parse(JSON.stringify(frames[currentFrame].balls));
+            	walls = JSON.parse(JSON.stringify(frames[currentFrame].walls));
             }
         }
     }

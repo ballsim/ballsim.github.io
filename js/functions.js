@@ -7,7 +7,7 @@ function percentage(variable){
 	window[variable] = window["base" + variable] * Number(document.getElementById(variable).value)/100;
 }
 
-function isNumber(n) {return /^-?[\d.]+(?:e-?\d+)?$/.test(n);}
+function isNumber(n){return /^-?[\d.]+(?:e-?\d+)?$/.test(n);}
 
 function ClosestPointOnWall(x,y,wall){
 	var dx=x-wall.x1;

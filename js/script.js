@@ -17,6 +17,7 @@ var wallCollision = true;
 var edgeCollision = true;
 var wrapEdges = true;
 var paused = false;
+var pausedFrame = false;
 var trail = false;
 var standardRadiusBalls = 25;
 
@@ -34,7 +35,7 @@ window.onload = function() {
 }
 
 function frame(){
-	if(!paused){
+	if(!paused || pausedFrame){
 		frames.length = currentFrame;
 		frames.push({balls: JSON.parse(JSON.stringify(balls)), walls: JSON.parse(JSON.stringify(walls))});
 		currentFrame++;
@@ -43,6 +44,8 @@ function frame(){
 		if(friction){applyFriction();}
 		moveBalls();
 		collision();
+
+		pausedFrame = false;
 	}
 	
 	drawObjects();
